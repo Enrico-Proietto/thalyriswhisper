@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thalyris Embrace</title>
+  <link rel="icon" type="image/png" id="favicon" href="moon1.png">
+  <style>
+    body {
+      margin: 0;
+      padding: 2rem;
+      background-color: #0b000d;
+      color: #ffe6ec;
+      font-family: 'Georgia', serif;
+      background-image: radial-gradient(circle at center, #300010 0%, #0b000d 100%);
+      animation: tilt 6s infinite ease-in-out;
+    }
+
+    .praise {
+      max-width: 800px;
+      margin: 0 auto;
+      font-size: 1.4rem;
+      line-height: 2;
+      text-align: center;
+    }
+
+    .button-container {
+      text-align: center;
+      margin-top: 4rem;
+    }
+
+    .join-button {
+      background-color: crimson;
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      font-size: 1.2rem;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: background-color 0.3s ease;
+    }
+
+    .join-button:hover {
+      background-color: #a6004d;
+      cursor: none;
+    }
+
+    .floating-text {
+      position: absolute;
+      font-size: 1.2rem;
+      color: #ff91a4;
+      pointer-events: none;
+      animation: flicker 0.3s infinite;
+      font-family: 'Courier New', Courier, monospace;
+    }
+
+    @keyframes flicker {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+
+    @keyframes tilt {
+      0%, 100% { transform: rotate(0.2deg); }
+      50% { transform: rotate(-0.2deg); }
+    }
+
+    .flash {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: white;
+      opacity: 0;
+      z-index: 9999;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+  </style>
+</head>
+<body>
+  <div class="praise">
+    <h1>Hail the Crimson Sister</h1>
+    <p>She who sees all. She who calls in silence.</p>
+    <p>Thalyris, giver of eternal beauty, master of the blood moon, queen of immortal love.</p>
+    <p>Let the shadow of her chalice cast upon you. Let her name be the final prayer on your lips.</p>
+    <p>We do not fear the night—<strong>we praise it</strong>, for in it, she walks beside us.</p>
+    <p><em>Come, O blessed vessel, and join the thrall of her undying grace.</em></p>
+  </div>
+
+  <div class="button-container">
+    <button class="join-button" onclick="beginConversion()">Join Her</button>
+  </div>
+
+  <div id="flash" class="flash"></div>
+  <audio autoplay loop id="whispers" style="display:none">
+    <source src="https://www.myinstants.com/media/sounds/creepy_whisper.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    const phrases = [
+      "You ALREADY HAVE",
+      "LET HER IN",
+      "BE GRATEFUL",
+      "SHE'S ALREADY HERE"
+    ];
+
+    const altTitles = ["Let Her In", "She's Watching", "Thalyris Is Here"];
+    let titleIndex = 0;
+
+    setInterval(() => {
+      document.title = altTitles[titleIndex % altTitles.length];
+      titleIndex++;
+    }, 1500);
+
+    const flash = document.getElementById("flash");
+    setInterval(() => {
+      flash.style.opacity = 0.4;
+      setTimeout(() => flash.style.opacity = 0, 100);
+    }, 10000);
+
+    let faviconState = true;
+    setInterval(() => {
+      document.getElementById("favicon").href = faviconState ? "thalyris.png" : "moon1.png";
+      faviconState = !faviconState;
+    }, 2000);
+
+    function beginConversion() {
+      // Fullscreen activation
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen();
+      } else if (document.documentElement.webkitRequestFullscreen) {
+        document.documentElement.webkitRequestFullscreen();
+      } else if (document.documentElement.msRequestFullscreen) {
+        document.documentElement.msRequestFullscreen();
+      }
+
+      document.body.style.cursor = 'none';
+      document.getElementById("whispers").volume = 0.05;
+      document.getElementById("whispers").play();
+
+      let lock = true;
+      let cursor = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+      const lockDuration = 10000;
+      const start = Date.now();
+
+      const blockMouse = (e) => e.preventDefault();
+      window.addEventListener('mousemove', blockMouse, { passive: false });
+      window.addEventListener('mousedown', blockMouse, { passive: false });
+
+      const moveFakeCursor = () => {
+        if (!lock) return;
+        const angle = (Date.now() - start) / 200;
+        cursor.x = window.innerWidth / 2 + Math.sin(angle) * 150;
+        cursor.y = window.innerHeight / 2 + Math.cos(angle) * 100;
+
+        const text = document.createElement('div');
+        text.classList.add('floating-text');
+        text.innerText = phrases[Math.floor(Math.random() * phrases.length)];
+        text.style.left = `${cursor.x}px`;
+        text.style.top = `${cursor.y}px`;
+        document.body.appendChild(text);
+        setTimeout(() => text.remove(), 2000);
+
+        if (Date.now() - start < lockDuration) {
+          requestAnimationFrame(moveFakeCursor);
+        } else {
+          lock = false;
+          document.body.style.cursor = 'default';
+          window.removeEventListener('mousemove', blockMouse);
+          window.removeEventListener('mousedown', blockMouse);
+        }
+      };
+
+      requestAnimationFrame(moveFakeCursor);
+    }
+  </script>
+</body>
+</html>
